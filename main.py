@@ -50,7 +50,7 @@ class App(customtkinter.CTk):
         self.dendroOptionsMenu.grid(row=4, column=0, padx=20, pady=10)
 
         self.genDendrogramLabel = customtkinter.CTkLabel(self.sidebarFrame,
-                                                         text="Wygeneruj dendrogram:",
+                                                         text="Narysuj dendrogram:",
                                                          font=customtkinter.CTkFont(size=14, weight="bold"))
         self.genDendrogramLabel.grid(row=5, column=0, padx=20, pady=(10, 0))
         self.genDendrogramButton = customtkinter.CTkButton(self.sidebarFrame,
@@ -69,13 +69,14 @@ class App(customtkinter.CTk):
 
     def checkPath(self):
         dialog = customtkinter.filedialog.askopenfilename(filetypes=(("CSV Files", "*.csv"),))
-        if dialog is not None:
+        if dialog:
             print("Plik: ", dialog.title())
-        return dialog.title()
+            return dialog.title()
 
     def openFile(self):
         try:
             self.df = pd.read_csv(self.checkPath())
+            print(self.df)
             self.genDendrogramButton.configure(state="normal")
         except:
             print("Nie wczytano pliku")
@@ -85,12 +86,13 @@ class App(customtkinter.CTk):
 
     def generateDendrogram(self, file, dendrogramMethod: str):
         fig = Figure()
+        fig.set_facecolor('#2b2b2b')
         plot = fig.add_subplot(111)
         shc.dendrogram(shc.linkage(file, method=dendrogramMethod), ax=plot)
-        plot.set_facecolor("black")
-        plot.set_title('Dendrogram')
-        plot.set_xlabel('nr instancji (wiersza w naszych danych)')
-        plot.set_ylabel('Euclidean distances')
+        plot.set_facecolor("#2b2b2b")
+        plot.set_title("Dendrogram")
+        plot.set_xlabel("Nr instancji (wiersza)")
+        plot.set_ylabel("Odleglosci euklidesowe")
         canvas = FigureCanvasTkAgg(fig, master=self.plotFrame)
         canvas.get_tk_widget().grid(row=0, column=0, padx=20, pady=15)
         canvas.draw()
